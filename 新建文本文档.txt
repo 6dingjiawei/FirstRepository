@@ -1,0 +1,184 @@
+
+做题思路
+1、粗略的读一下题目，找“的”，右边就是我们要的字段 select 出来
+2、这些字段来自什么表，找出来 from一下
+3、如果是多表，马上写出他们的关系，这个关系一般是a.id=b.id
+   即2表中相同字段马上相等
+4、再读一次题目，用拍大腿的精神想问题，自然翻译
+http://www.docin.com/p-307791183.html
+
+
+
+1.	查询工资大于2500的员工姓名和工资
+2.	查询员工号为7839的员工的姓名和部门号和年薪
+3.	选择工资不在 5000 到 12000 的员工的姓名和工资
+4.	选择在 20 或 30 号部门工作的员工姓名和部门号
+5.	选择公司中没有管理者的员工姓名及职位
+6.	选择公司中有奖金的员工姓名，工资
+7.	选择员工姓名的第三个字母是 a 的员工姓名
+8.	选择姓名中有字母 a 和 e 的员工姓名
+9.	显示出表emp表中 ename 以 'e'结尾的员工信息、
+10.	显示出表 emp 的 manager是 7839,7788, 7782的员工姓名、职位
+
+
+2.select ename,deptno,(sal+ifnull(comm,0))*12 year_sal  from emp where empno=7839;
+3.select ename,sal from emp from emp where not between 5000 and 12000;
+4.select ename,deptno from emp where deptno in (20,30);
+5.select ename,job from emp where mgr is null;
+6.select ename,sal from emp where comm is not null;
+7.select ename from emp where ename like '%__a%';
+8.select ename from emp where ename like '%a% or like '%e%';
+9.select * from emp where ename like 'e%';
+10.select ename,job from emp where mgr in (7839,7788,7782) and job='MANAGER';
+
+
+
+
+select ..... #单字段、多字段、全部字段、运算(ifnull)、别名、分组函数 去重(distinct)
+from .....   别名
+[where ...]   #数字、字符串、空值、一串值、取反、and&or
+[group by ...]   #select上有分组函数时，就一定要group by
+[having ...]    #group by后对数据进行过滤
+[order by ...]  #升序asc ，降序 desc，别名，位置。多字段排序
+
+
+做题思路
+1、粗略的读一下题目，找“的”，右边就是我们要的字段 select 出来
+2、这些字段来自什么表，找出来 from一下
+3、如果是多表，马上写出他们的关系，这个关系一般是a.id=b.id
+   即2表中相同字段马上相等
+4、再读一次题目，用拍大腿的精神想问题，自然翻译
+
+
+1.	查询工资大于2500的员工姓名和工资
+
+select ename,sal
+from emp
+where sal>2500;
+
+
+2.	查询员工号为7839的员工的姓名和部门号和年薪
+
+select ename,deptno,(sal+ifnull(comm,0))*12 year_sal
+from emp
+where empno=7839;
+
+
+3.	选择工资不在 5000 到 12000 的员工的姓名和工资
+select ename,sal
+from emp
+where sal not between 5000 and 12000;
+
+
+
+4.	选择在 20 或 30 号部门工作的员工姓名和部门号
+
+select ename,deptno
+from emp
+where deptno=20 or deptno=30;
+where deptno in (20,30);
+
+
+5.	选择公司中没有管理者的员工姓名及职位
+
+select ename,job
+from emp
+where mgr is null;
+
+
+6.	选择公司中有奖金的员工姓名，工资
+
+select ename,sal
+from emp
+where comm is not null;
+
+
+7.	选择员工姓名的第三个字母是 a 的员工姓名
+
+select ename
+from emp
+where ename like '__a%';
+
+8.	选择姓名中有字母 a 和 e 的员工姓名
+
+select ename
+from emp
+where ename like '%a%' or like '%e%';
+
+
+9.	显示出表emp表中 ename 以 'e'结尾的员工信息、
+
+select *
+from emp
+where ename like '%e';
+
+10.	显示出表 emp 的 manager是 7839,7788, 7782的员工姓名、职位
+select ename,job
+from emp
+where mgr in (7839,7788, 7782)
+and job='MANAGER'
+
+
+
+
+
+10. 列出与“SCOTT”从事相同工作的所有雇员
+select ename from emp where job=(select ename from emp where job='SCCOT');
+
+11. 列出某些雇员的姓名和薪金，条件是他们的薪金等于部门30中任何一个雇员的薪
+
+select ename,sal from emp where sal in (select sal from emp where deptno=30);
+
+12. 列出某些雇员的姓名和薪金，条件是他们的薪金高于部门30中所有雇员的薪金
+
+select ename,sal from emp where sal>(select max(sal) from emp where deptno=30);
+
+1. 列出至少有1个雇员的所有部门
+
+select dname from dept d  where  d.deptno in (select distinct deptno from dept);
+
+2. 列出薪金比"SMITH"多的所有雇员
+
+select ename from emp where sal>(select sal from emp where ename='SMITH');
+
+3. 列出所有雇员的姓名及其直接上级的姓名
+
+select a.ename empname,b.ename mgrname from emp a,emp b where a.mgr=b.empno;
+
+
+5. 列出部门名称和这些部门的雇员,同时列出那些没有雇员的部门
+
+select dname,ename from emp e right join dept d on e.deptno=d.deptno;
+
+6. 列出所有“CLERK”（办事员）的姓名及其部门名称
+select ename,dname from emp e ,dept where e.deptno=d.deptno and  ename='CLERK';
+
+7. 列出各种工作类别的最低薪金，显示最低薪金大于1500的记录
+
+select min(sal) new_sal from emp group by job having new_sal>1500;
+
+8.列出从事“SALESMAN”（销售）工作的雇员的姓名，假定不知道销售部的部门编号
+
+select ename from emp where empno in (select empno from emp where job='SALESMAN');
+
+9. 列出薪金高于公司平均水平的所有雇员
+
+select ename from emp where sal>(select avg(sal) from emp);
+
+13. 列出每个部门的信息以及该部门中雇员的数量
+
+select deptno,dname,loc,count(*) from dept,emp where dept.deptno=emp.deptno group by dept.deptno,dept.dname,loc;
+
+
+14. 列出所有雇员的雇员名称、部门名称和薪
+
+select ename,sal,dname from emp,dept where emp.deptno=dept.deptno;
+
+
+15. 列出各种类别工作的最低工资
+
+select distinct job from emp 
+
+
+
+
